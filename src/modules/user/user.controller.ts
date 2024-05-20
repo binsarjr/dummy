@@ -1,7 +1,7 @@
-import { Controller, Delete, Get, Post } from '@nestjs/common';
-import type { PrismaService } from 'src/services/prisma/prisma.service';
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { PrismaService } from 'src/services/prisma/prisma.service';
 import { generateApiKey } from 'src/supports/str.support';
-import type { CreateUser } from './user.dto';
+import { CreateUser } from './user.dto';
 
 @Controller('user')
 export class UserController {
@@ -22,7 +22,7 @@ export class UserController {
   }
 
   @Post('')
-  async create(data: CreateUser) {
+  async create(@Body() data: CreateUser) {
     return this.prisma.user.create({
       data: {
         email: data.email,
@@ -34,7 +34,7 @@ export class UserController {
   }
 
   @Post(':id')
-  async update(id: string, data: CreateUser) {
+  async update(id: string, @Body() data: CreateUser) {
     return this.prisma.user.update({
       where: {
         id,
