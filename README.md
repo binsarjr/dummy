@@ -1,6 +1,6 @@
 # Dummy
 
-API untuk dummy data. Mirip seperti jsonplaceholder.typicode.com
+API untuk dummy data. Mirip seperti https://jsonplaceholder.typicode.com
 
 Hanya saja ini dikhususkan untuk membuat dummy data untuk kelas di Neuversity.
 
