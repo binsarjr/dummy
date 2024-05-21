@@ -28,6 +28,8 @@ export class ApiKeyGuard implements CanActivate {
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
+
+      request['user'] = user;
     }
 
     request['apikey'] = apiKey || undefined;

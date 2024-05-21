@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { generateApiKey } from 'src/supports/str.support';
@@ -15,7 +15,7 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(id: string) {
+  async findOne(@Param('id') id: string) {
     return this.prisma.user.findUnique({
       where: {
         id,
@@ -36,7 +36,7 @@ export class UserController {
   }
 
   @Post(':id')
-  async update(id: string, @Body() data: CreateUser) {
+  async update(@Param('id') id: string, @Body() data: CreateUser) {
     return this.prisma.user.update({
       where: {
         id,
@@ -50,7 +50,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  async delete(id: string) {
+  async delete(@Param('id') id: string) {
     return this.prisma.user.delete({
       where: {
         id,

@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
   Param,
   Post,
   Put,
@@ -83,20 +82,10 @@ export class TodosController {
     const apiKey = request.apikey;
 
     if (apiKey) {
-      const user = await this.prisma.user.findUnique({
-        where: {
-          apiKey,
-        },
-      });
-
-      if (!user) {
-        throw new HttpException('User not found', 404);
-      }
-
       return this.prisma.todo.create({
         data: {
           ...data,
-          userId: user.id,
+          userId: request.user.id,
         },
       });
     }
