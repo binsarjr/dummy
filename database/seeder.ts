@@ -49,10 +49,10 @@ const POSTS = faker.helpers.multiple(CreateRandomPost, {
 });
 
 async function main() {
+  await prisma.user.createMany({
+    data: USERS,
+  });
   await Promise.all([
-    prisma.user.createMany({
-      data: USERS,
-    }),
     prisma.todo.createMany({
       data: TODOS.map((todo) => ({
         ...todo,
