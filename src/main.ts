@@ -13,6 +13,8 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('Dummy API')
     .setVersion('0.0.0')
