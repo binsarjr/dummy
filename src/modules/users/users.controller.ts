@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { generateApiKey } from 'src/supports/str.support';
-import { CreateUser } from './user.dto';
+import { CreateUser } from './users.dto';
 
 @Controller('users')
 @ApiTags('users')

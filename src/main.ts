@@ -16,6 +16,14 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Dummy API')
     .setVersion('0.0.0')
+    .addApiKey(
+      {
+        name: 'x-api-key',
+        description: 'API Key',
+        type: 'apiKey',
+      },
+      'apikey',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
