@@ -21,15 +21,6 @@ export class TodosController {
   @Get('')
   async findAll(@Req() request) {
     return this.prisma.todo.findMany({
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
       where: {
         user: {
           apiKey: request.apikey,
