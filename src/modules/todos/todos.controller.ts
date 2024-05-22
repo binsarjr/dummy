@@ -6,9 +6,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { CreateTodo } from './todos.dto';
 
@@ -22,7 +28,38 @@ export class TodosController {
   @ApiOperation({
     summary: 'mengambil semua todo',
   })
-  async findAll(@Req() request) {
+  @ApiQuery({
+    name: 'search',
+    description: 'pencarian todo berdasarkan judul',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'completed',
+    description: 'pencarian todo berdasarkan status',
+    required: false,
+    type: Boolean,
+  })
+  async findAll(
+    @Req() request,
+    @Query('search') search?: string,
+    @Query('completed') completed?: string,
+  ) {
+    if (search)
+      return this.prisma.todo.findMany({
+        where: {
+          title: {
+            contains: search,
+          },
+        },
+      });
+
+    if (completed)
+      return this.prisma.todo.findMany({
+        where: {
+          completed: completed.toLowerCase() === 'true',
+        },
+      });
+
     return this.prisma.todo.findMany({
       where: {
         user: {

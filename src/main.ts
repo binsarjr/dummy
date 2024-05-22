@@ -18,6 +18,9 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Dummy API')
     .setVersion('0.0.0')
+    .setDescription(
+      'API untuk dummy data. Mirip seperti https://jsonplaceholder.typicode.com',
+    )
     .addApiKey(
       {
         name: 'x-api-key',
@@ -26,6 +29,9 @@ async function bootstrap() {
       },
       'apikey',
     )
+    .addTag('users', 'CRUD data User')
+    .addTag('todos', 'CRUD data Todo')
+    .addTag('posts', 'CRUD data Post')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

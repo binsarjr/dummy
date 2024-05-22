@@ -6,9 +6,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { CreatePost } from './posts.dto';
 
@@ -22,7 +28,29 @@ export class PostsController {
   @ApiOperation({
     summary: 'mengambil semua post',
   })
-  async findAll(@Req() request) {
+  @ApiQuery({
+    name: 'search',
+    description: 'pencarian post berdasarkan judul atau content',
+    required: false,
+  })
+  async findAll(@Req() request, @Query('search') search?: string) {
+    if (search)
+      return this.prisma.post.findMany({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: search,
+              },
+            },
+            {
+              content: {
+                contains: search,
+              },
+            },
+          ],
+        },
+      });
     if (request.apikey)
       return this.prisma.post.findMany({
         where: {

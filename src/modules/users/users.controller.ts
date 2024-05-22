@@ -1,5 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { generateApiKey } from 'src/supports/str.support';
 import { CreateUser } from './users.dto';
@@ -10,10 +18,32 @@ export class UserController {
   constructor(private readonly prisma: PrismaService) {}
 
   @Get('')
+  @ApiQuery({
+    name: 'search',
+    description: 'pencarian user berdasarkan nama atau email',
+    required: false,
+  })
   @ApiOperation({
     summary: 'mengambil semua user',
   })
-  async findAll() {
+  async findAll(@Query('search') search?: string) {
+    if (search)
+      return this.prisma.user.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: search,
+              },
+            },
+            {
+              email: {
+                contains: search,
+              },
+            },
+          ],
+        },
+      });
     return this.prisma.user.findMany();
   }
 
