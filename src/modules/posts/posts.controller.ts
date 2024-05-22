@@ -8,7 +8,7 @@ import {
   Put,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { CreatePost } from './posts.dto';
 
@@ -19,6 +19,9 @@ export class PostsController {
   constructor(private readonly prisma: PrismaService) {}
 
   @Get('')
+  @ApiOperation({
+    summary: 'mengambil semua post',
+  })
   async findAll(@Req() request) {
     if (request.apikey)
       return this.prisma.post.findMany({
@@ -33,6 +36,9 @@ export class PostsController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'mengambil post berdasarkan id',
+  })
   async findOne(@Req() request, @Param('id') id: string) {
     if (request.apikey)
       return this.prisma.post.findUnique({
@@ -52,6 +58,9 @@ export class PostsController {
   }
 
   @Post('')
+  @ApiOperation({
+    summary: 'tambah post baru',
+  })
   async create(@Req() request, @Body() data: CreatePost) {
     if (request.apikey)
       return this.prisma.post.create({
@@ -71,6 +80,9 @@ export class PostsController {
   }
 
   @Put(':id')
+  @ApiOperation({
+    summary: 'edit post berdasarkan id',
+  })
   async update(
     @Req() request,
     @Param('id') id: string,
@@ -96,6 +108,9 @@ export class PostsController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'hapus post berdasarkan id',
+  })
   async delete(@Req() request, @Param('id') id: string) {
     if (request.apikey)
       return this.prisma.post.delete({

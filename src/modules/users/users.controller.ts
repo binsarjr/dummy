@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { generateApiKey } from 'src/supports/str.support';
 import { CreateUser } from './users.dto';
@@ -10,11 +10,17 @@ export class UserController {
   constructor(private readonly prisma: PrismaService) {}
 
   @Get('')
+  @ApiOperation({
+    summary: 'mengambil semua user',
+  })
   async findAll() {
     return this.prisma.user.findMany();
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'mengambil user berdasarkan id',
+  })
   async findOne(@Param('id') id: string) {
     return this.prisma.user.findUnique({
       where: {
@@ -24,6 +30,9 @@ export class UserController {
   }
 
   @Post('')
+  @ApiOperation({
+    summary: 'tambah user baru',
+  })
   async create(@Body() data: CreateUser) {
     return this.prisma.user.create({
       data: {
@@ -36,6 +45,9 @@ export class UserController {
   }
 
   @Post(':id')
+  @ApiOperation({
+    summary: 'edit user berdasarkan id',
+  })
   async update(@Param('id') id: string, @Body() data: CreateUser) {
     return this.prisma.user.update({
       where: {
@@ -50,6 +62,9 @@ export class UserController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'hapus user berdasarkan id',
+  })
   async delete(@Param('id') id: string) {
     return this.prisma.user.delete({
       where: {
