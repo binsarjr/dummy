@@ -50,6 +50,9 @@ export class TodosController {
           title: {
             contains: search,
           },
+          user: {
+            apiKey: request.apikey,
+          },
         },
       });
 
@@ -57,6 +60,9 @@ export class TodosController {
       return this.prisma.todo.findMany({
         where: {
           completed: completed.toLowerCase() === 'true',
+          user: {
+            apiKey: request.apikey,
+          },
         },
       });
 
