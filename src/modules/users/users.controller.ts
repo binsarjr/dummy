@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -74,7 +75,7 @@ export class UserController {
     });
   }
 
-  @Post(':id')
+  @Put(':id')
   @ApiOperation({
     summary: 'edit user berdasarkan id',
   })

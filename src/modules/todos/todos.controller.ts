@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -123,7 +124,7 @@ export class TodosController {
     });
   }
 
-  @Post(':id')
+  @Put(':id')
   @ApiOperation({
     summary: 'edit todo berdasarkan id',
   })
@@ -153,7 +154,7 @@ export class TodosController {
     });
   }
 
-  @Put(':id/complete')
+  @Patch(':id/complete')
   @ApiOperation({
     summary: 'mengubah status menjadi complete todo berdasarkan id',
   })
@@ -179,7 +180,7 @@ export class TodosController {
     });
   }
 
-  @Put(':id/incomplete')
+  @Patch(':id/incomplete')
   @ApiOperation({
     summary: 'mengubah status menjadi incomplete todo berdasarkan id',
   })
