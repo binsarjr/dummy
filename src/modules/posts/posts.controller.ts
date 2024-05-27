@@ -15,6 +15,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import type { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { CreatePost } from './posts.dto';
 
@@ -34,33 +35,38 @@ export class PostsController {
     required: false,
   })
   async findAll(@Req() request, @Query('search') search?: string) {
-    if (search)
-      return this.prisma.post.findMany({
-        where: {
-          OR: [
-            {
-              title: {
-                contains: search,
-              },
-            },
-            {
-              content: {
-                contains: search,
-              },
-            },
-          ],
-        },
-      });
-    if (request.apikey)
-      return this.prisma.post.findMany({
-        where: {
-          user: {
-            apiKey: request.apikey,
-          },
-        },
-      });
+    let where: Prisma.PostWhereInput = {};
 
-    return this.prisma.post.findMany();
+    if (search) {
+      where = {
+        ...where,
+        OR: [
+          {
+            title: {
+              contains: search,
+            },
+          },
+          {
+            content: {
+              contains: search,
+            },
+          },
+        ],
+      };
+    }
+
+    if (request.apikey) {
+      where = {
+        ...where,
+        user: {
+          apiKey: request.apikey,
+        },
+      };
+    }
+
+    return this.prisma.post.findMany({
+      where,
+    });
   }
 
   @Get(':id')
@@ -68,21 +74,19 @@ export class PostsController {
     summary: 'mengambil post berdasarkan id',
   })
   async findOne(@Req() request, @Param('id') id: string) {
-    if (request.apikey)
-      return this.prisma.post.findUnique({
-        where: {
-          id,
-          user: {
-            apiKey: request.apikey,
-          },
+    let where: Prisma.PostWhereUniqueInput = {
+      id,
+    };
+    if (request.apikey) {
+      where = {
+        ...where,
+        user: {
+          apiKey: request.apikey,
         },
-      });
+      };
+    }
 
-    return this.prisma.post.findUnique({
-      where: {
-        id,
-      },
-    });
+    return this.prisma.post.findUnique({ where });
   }
 
   @Post('')
@@ -90,20 +94,23 @@ export class PostsController {
     summary: 'tambah post baru',
   })
   async create(@Req() request, @Body() data: CreatePost) {
-    if (request.apikey)
-      return this.prisma.post.create({
-        data: {
-          ...data,
-          user: {
-            connect: {
-              apiKey: request.apikey,
-            },
+    let createData: Prisma.PostCreateInput = {
+      ...data,
+    };
+
+    if (request.apikey) {
+      createData = {
+        ...createData,
+        user: {
+          connect: {
+            apiKey: request.apikey,
           },
         },
-      });
+      };
+    }
 
     return this.prisma.post.create({
-      data,
+      data: createData,
     });
   }
 
@@ -116,21 +123,21 @@ export class PostsController {
     @Param('id') id: string,
     @Body() data: CreatePost,
   ) {
-    if (request.apikey)
-      return this.prisma.post.update({
-        where: {
-          id,
-          user: {
-            apiKey: request.apikey,
-          },
+    let where: Prisma.PostWhereUniqueInput = {
+      id,
+    };
+
+    if (request.apikey) {
+      where = {
+        ...where,
+        user: {
+          apiKey: request.apikey,
         },
-        data,
-      });
+      };
+    }
 
     return this.prisma.post.update({
-      where: {
-        id,
-      },
+      where,
       data,
     });
   }
@@ -140,20 +147,21 @@ export class PostsController {
     summary: 'hapus post berdasarkan id',
   })
   async delete(@Req() request, @Param('id') id: string) {
-    if (request.apikey)
-      return this.prisma.post.delete({
-        where: {
-          id,
-          user: {
-            apiKey: request.apikey,
-          },
+    let where: Prisma.PostWhereUniqueInput = {
+      id,
+    };
+
+    if (request.apikey) {
+      where = {
+        ...where,
+        user: {
+          apiKey: request.apikey,
         },
-      });
+      };
+    }
 
     return this.prisma.post.delete({
-      where: {
-        id,
-      },
+      where,
     });
   }
 }
