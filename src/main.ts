@@ -1,11 +1,11 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
 import {
   FastifyAdapter,
   type NestFastifyApplication,
-} from '@nestjs/platform-fastify';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+} from '@nestjs/platform-fastify'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { AppModule } from './app.module'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -19,7 +19,21 @@ async function bootstrap() {
     .setTitle('Dummy API')
     .setVersion('0.0.0')
     .setDescription(
-      'API untuk dummy data. Mirip seperti https://jsonplaceholder.typicode.com',
+      `
+
+
+API untuk dummy data. Mirip seperti https://jsonplaceholder.typicode.com
+
+
+
+
+
+      `.trim(),
+    )
+    .setContact(
+      'Binsar',
+      'https://github.com/binsarjr/dummy',
+      'binsarjr121@gmail.com',
     )
     .addApiKey(
       {
@@ -32,8 +46,10 @@ async function bootstrap() {
     .addTag('users', 'CRUD data User')
     .addTag('todos', 'CRUD data Todo')
     .addTag('posts', 'CRUD data Post')
+
     .build();
   const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('', app, document);
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
