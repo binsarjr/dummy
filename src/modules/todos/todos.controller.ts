@@ -15,6 +15,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import type { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { CreateTodo } from './todos.dto';
 
@@ -44,34 +45,28 @@ export class TodosController {
     @Query('search') search?: string,
     @Query('completed') completed?: string,
   ) {
-    if (search)
-      return this.prisma.todo.findMany({
-        where: {
-          title: {
-            contains: search,
-          },
-          user: {
-            apiKey: request.apikey,
-          },
-        },
-      });
+    let where: Prisma.TodoWhereInput = {};
 
-    if (completed)
-      return this.prisma.todo.findMany({
-        where: {
-          completed: completed.toLowerCase() === 'true',
-          user: {
-            apiKey: request.apikey,
-          },
-        },
-      });
+    if (search) {
+      where.title = {
+        contains: search,
+      };
+    }
+
+    if (completed) {
+      where.completed = {
+        equals: completed.toLowerCase() === 'true',
+      };
+    }
+
+    if (request.apikey) {
+      where.user = {
+        apiKey: request.apikey,
+      };
+    }
 
     return this.prisma.todo.findMany({
-      where: {
-        user: {
-          apiKey: request.apikey,
-        },
-      },
+      where,
     });
   }
 
@@ -80,25 +75,17 @@ export class TodosController {
     summary: 'mengambil todo berdasarkan id',
   })
   async findOne(@Param('id') id: string, @Req() request) {
-    const apiKey = request.apikey;
-    if (apiKey) {
-      return this.prisma.todo.findUnique({
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
+    let where: Prisma.TodoWhereUniqueInput = {
+      id,
+    };
+
+    if (request.apikey) {
+      where = {
+        ...where,
+        user: {
+          apiKey: request.apikey,
         },
-        where: {
-          id,
-          user: {
-            apiKey,
-          },
-        },
-      });
+      };
     }
 
     return this.prisma.todo.findUnique({
@@ -111,9 +98,7 @@ export class TodosController {
           },
         },
       },
-      where: {
-        id,
-      },
+      where,
     });
   }
 
@@ -149,13 +134,21 @@ export class TodosController {
   ) {
     const apiKey = request.apikey;
 
-    return this.prisma.todo.update({
-      where: {
-        id,
+    let where: Prisma.TodoWhereUniqueInput = {
+      id,
+    };
+
+    if (request.apikey) {
+      where = {
+        ...where,
         user: {
-          apiKey,
+          apiKey: request.apikey,
         },
-      },
+      };
+    }
+
+    return this.prisma.todo.update({
+      where,
       data,
     });
   }
@@ -166,13 +159,20 @@ export class TodosController {
   })
   async complete(@Param('id') id: string, @Req() request) {
     const apiKey = request.apikey;
-    return this.prisma.todo.update({
-      where: {
-        id,
+    let where: Prisma.TodoWhereUniqueInput = {
+      id,
+    };
+
+    if (request.apikey) {
+      where = {
+        ...where,
         user: {
-          apiKey,
+          apiKey: request.apikey,
         },
-      },
+      };
+    }
+    return this.prisma.todo.update({
+      where,
       data: {
         completed: true,
       },
@@ -185,13 +185,20 @@ export class TodosController {
   })
   async incomplete(@Param('id') id: string, @Req() request) {
     const apiKey = request.apikey;
-    return this.prisma.todo.update({
-      where: {
-        id,
+    let where: Prisma.TodoWhereUniqueInput = {
+      id,
+    };
+
+    if (request.apikey) {
+      where = {
+        ...where,
         user: {
-          apiKey,
+          apiKey: request.apikey,
         },
-      },
+      };
+    }
+    return this.prisma.todo.update({
+      where,
       data: {
         completed: false,
       },
@@ -204,13 +211,21 @@ export class TodosController {
   })
   async delete(@Param('id') id: string, @Req() request) {
     const apiKey = request.apikey;
-    return this.prisma.todo.delete({
-      where: {
-        id,
+    let where: Prisma.TodoWhereUniqueInput = {
+      id,
+    };
+
+    if (request.apikey) {
+      where = {
+        ...where,
         user: {
-          apiKey,
+          apiKey: request.apikey,
         },
-      },
+      };
+    }
+
+    return this.prisma.todo.delete({
+      where,
     });
   }
 }
